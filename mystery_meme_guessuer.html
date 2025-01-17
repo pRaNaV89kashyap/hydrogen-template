@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mystery Box Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .mystery-box {
+            width: 200px;
+            height: 200px;
+            background-color: #ffcc00;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border: 2px solid #000;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        .mystery-box:hover {
+            background-color: #ffdd44;
+        }
+        .meme {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .meme img {
+            max-width: 90%;
+            max-height: 400px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .quiz {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .quiz input {
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .quiz button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="mystery-box" onclick="revealMeme()">
+        🎁 Click the Mystery Box 🎁
+    </div>
+    <div class="meme" id="meme-container"></div>
+    <div class="quiz" id="quiz-container">
+        <input type="text" id="meme-name" placeholder="Name the meme">
+        <button onclick="checkAnswer()">Submit</button>
+        <p id="feedback"></p>
+    </div>
+
+    <script>
+        const memes = [
+            { url: "https://i.imgflip.com/4/30b1gx.jpg", name: "Distracted Boyfriend" },
+            { url: "https://i.imgflip.com/4t0m5.jpg", name: "Drake Hotline Bling" },
+            { url: "https://i.imgflip.com/1bij.jpg", name: "One Does Not Simply" },
+            { url: "https://i.imgflip.com/261o3j.jpg", name: "Woman Yelling at Cat" },
+            { url: "https://i.imgflip.com/3vzej.jpg", name: "Mocking Spongebob" },
+            { url: "https://i.imgflip.com/5j5t.jpg", name: "Batman Slapping Robin" },
+            { url: "https://i.imgflip.com/1otk96.jpg", name: "Expanding Brain" },
+            { url: "https://i.imgflip.com/9ehk.jpg", name: "Success Kid" },
+            { url: "https://i.imgflip.com/2kbn1e.jpg", name: "Left Exit 12 Off Ramp" },
+            { url: "https://i.imgflip.com/1ur9b0.jpg", name: "Leonardo DiCaprio Cheers" },
+            { url: "https://i.imgflip.com/2/26am.jpg", name: "Y U No" },
+            { url: "https://i.imgflip.com/3/5w3.jpg", name: "Ancient Aliens" },
+            { url: "https://i.imgflip.com/4py1y0.jpg", name: "Two Buttons" },
+            { url: "https://i.imgflip.com/2wifvo.jpg", name: "Is This A Pigeon" },
+            { url: "https://i.imgflip.com/345v97.jpg", name: "Gru's Plan" },
+            { url: "https://i.imgflip.com/39t1o.jpg", name: "Oprah You Get A" },
+            { url: "https://i.imgflip.com/4/10zzh.jpg", name: "Futurama Fry" },
+            { url: "https://i.imgflip.com/4/8p0a.jpg", name: "Bad Luck Brian" },
+            { url: "https://i.imgflip.com/1ur9b4.jpg", name: "Picard Facepalm" },
+            { url: "https://i.imgflip.com/2jpv5a.jpg", name: "Roll Safe Think About It" },
+            { url: "https://i.imgflip.com/3lm67k.jpg", name: "They're The Same Picture" },
+            { url: "https://i.imgflip.com/4acd7j.jpg", name: "Who Killed Hannibal" },
+            { url: "https://i.imgflip.com/1iy57.jpg", name: "Sparta Leonidas" },
+            { url: "https://i.imgflip.com/1qf1ik.jpg", name: "Simba Shadow" },
+            { url: "https://i.imgflip.com/2v5ozw.jpg", name: "Distracted Cat" },
+            { url: "https://i.imgflip.com/26hgvu.jpg", name: "Boardroom Suggestion" },
+            { url: "https://i.imgflip.com/2tvg2.jpg", name: "Evil Kermit" },
+            { url: "https://i.imgflip.com/2k7dxj.jpg", name: "First World Problems" },
+            { url: "https://i.imgflip.com/1x6f5t.jpg", name: "I Bet He's Thinking About" },
+            { url: "https://i.imgflip.com/3b11pu.jpg", name: "Change My Mind" },
+            { url: "https://i.imgflip.com/3tpcb.jpg", name: "UNO Draw 25" },
+            { url: "https://i.imgflip.com/2px7ad.jpg", name: "Surprised Pikachu" },
+            { url: "https://i.imgflip.com/3nhdn3.jpg", name: "Karen Refuses" },
+            { url: "https://i.imgflip.com/3sw1zw.jpg", name: "Ight Imma Head Out" },
+            { url: "https://i.imgflip.com/4r5g6.jpg", name: "Hide The Pain Harold" },
+            { url: "https://i.imgflip.com/3npdc8.jpg", name: "Well Yes But Actually No" },
+            { url: "https://i.imgflip.com/2b4rkj.jpg", name: "Me And The Boys" },
+            { url: "https://i.imgflip.com/1wtw3m.jpg", name: "He Protec He Attac" },
+            { url: "https://i.imgflip.com/4r7qk.jpg", name: "Philosoraptor" },
+            { url: "https://i.imgflip.com/2f14qp.jpg", name: "Car Salesman" },
+            { url: "https://i.imgflip.com/3kzuai.jpg", name: "Power Rangers Explain" },
+            { url: "https://i.imgflip.com/23ls.jpg", name: "The Most Interesting Man" },
+            { url: "https://i.imgflip.com/2ijr.jpg", name: "Scumbag Steve" },
+            { url: "https://i.imgflip.com/3uv6lo.jpg", name: "Astronauts Always Have Been" },
+            { url: "https://i.imgflip.com/2obx1j.jpg", name: "Unsettled Tom" },
+            { url: "https://i.imgflip.com/1bgw.jpg", name: "Condescending Wonka" },
+            { url: "https://i.imgflip.com/2fwp.jpg", name: "Grandma Finds The Internet" },
+            { url: "https://i.imgflip.com/4/17ef.jpg", name: "Forever Alone" },
+            { url: "https://i.imgflip.com/4g2a1j.jpg", name: "You Have No Power Here" },
+            { url: "https://i.imgflip.com/5m9ihz.jpg", name: "Knee Surgery Tomorrow" },
+            { url: "https://i.imgflip.com/5m9ii3.jpg", name: "Sigma Male Grindset" },
+            { url: "https://i.imgflip.com/5m9ii7.jpg", name: "Amogus Sus" },
+            { url: "https://i.imgflip.com/5m9iic.jpg", name: "Dank Depression" },
+            { url: "https://i.imgflip.com/5m9ihw.jpg", name: "Zoom Class Struggles" }
+        ];
+
+        let currentMeme = null;
+
+        function revealMeme() {
+            const memeContainer = document.getElementById("meme-container");
+            const randomIndex = Math.floor(Math.random() * memes.length);
+            currentMeme = memes[randomIndex];
+            memeContainer.innerHTML = `<img src="${currentMeme.url}" alt="Random Meme">`;
+            document.getElementById("feedback").innerText = ""; // Clear feedback
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById("meme-name").value.trim().toLowerCase();
+            const feedback = document.getElementById("feedback");
+            if (!currentMeme) {
+                feedback.innerText = "Click the mystery box first!";
+                feedback.style.color = "red";
+                return;
+            }
+            if (userAnswer === currentMeme.name.toLowerCase()) {
+                feedback.innerText = "Correct! 🎉";
+                feedback.style.color = "green";
+            } else {
+                feedback.innerText = `Wrong! The correct answer is: ${currentMeme.name}`;
+                feedback.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>
